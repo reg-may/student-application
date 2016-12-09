@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>Student Profile - Student Application</title>
+</h:head>
+<h:body>
+	<h:form id="studentDetails_form" >
+		<h:panelGrid id="notif">
+			<f:facet name="header">
+	            <p:messages id="msgs" />
+	        </f:facet>
+        </h:panelGrid>
+		<h4>Student</h4>
+		
+		<h:panelGrid columns="2" cellpadding="5">
+			<h:outputText value="Student Id" />
+			<h:outputText value="#{studentDetails.student.studentId}" />
+			<h:outputText value="Name:" />
+			<h:outputText value="#{studentDetails.student.firstName} #{studentDetails.student.lastName}" />
+		</h:panelGrid>
+		
+		<h4>Student Profile</h4>
+		
+		<p:dataTable id="studentProfile_table" cellpadding="5" value="#{studentDetails.student.studentProfileList}" var="studProfile" editable="true">
+			<p:ajax event="rowEdit" listener="#{studentDetails.onRowEdit}" update=":studentDetails_form:notif"/>
+			<p:ajax event="rowEditCancel" listener="#{studentDetails.onRowCancel}" update=":studentDetails_form:notif"/>
+			<p:column headerText="Gender">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.gender}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText id="modelInput" value="#{studProfile.gender}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Birthday">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.birthDay}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{studProfile.birthDay}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Contact No">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.contactNo}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{studProfile.contactNo}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Email">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.emailAdd}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{studProfile.emailAdd}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Year Level">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.yearLevel}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{studProfile.yearLevel}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Section">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{studProfile.section}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{studProfile.section}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column style="width:32px">
+		    	<p:rowEditor />
+		    </p:column>
+		    <p:column>
+		    	<p:commandButton value="Delete" action="#{studentDetails.deleteStudentProfile(studProfile)}" update=":studentDetails_form:studentProfile_table :studentDetails_form:notif" ></p:commandButton>
+		    </p:column>
+		</p:dataTable>
+		<br/>
+		<br/>
+		<h4>Click Save to save Profile</h4>
+		<p:dataTable id="studProfileTemp_table" value="#{studentDetails.loadStudentProfileList_temp()}" var="studProfile">
+			<p:column>
+				<h:outputLabel value="#{studProfile.gender}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{studProfile.birthDay}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{studProfile.contactNo}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{studProfile.emailAdd}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{studProfile.yearLevel}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{studProfile.section}" />
+			</p:column>
+		</p:dataTable>
+		<p:commandButton value="Add" oncomplete="PF('studentProfile').show();" 
+			action="#{studentDetails.createNewStudentProfile()}"
+			update=":studentDetails_form:studentProfile_dialog" 
+			resetValues="true"/>
+		<p:commandButton value="Save" disabled="#{studentDetails.disabled}" action="#{studentDetails.updateStudent()}" process="@this" update=":studentDetails_form:notif :studentDetails_form:studentProfile_table :studentDetails_form:studProfileTemp_table"/>
+		
+		<p:dialog header="Student Profile" width="500" widgetVar="studentProfile" id="studentProfile_dialog" >
+			<h4>Add Profile #{studentDetails.student.firstName} #{studentDetails.student.lastName}</h4>
+			<h:panelGrid columns="2" cellpadding="5"> 	
+				<p:outputLabel value="Gender"	/>		
+				<p:inputText value="#{studentDetails.studentProfile.gender}" />
+				<p:outputLabel value="Birthday"/>
+				<p:inputText value="#{studentDetails.studentProfile.birthDay}" />
+				<p:outputLabel value="Contact No"/>
+				<p:inputText value="#{studentDetails.studentProfile.contactNo}" />
+				<p:outputLabel value="Email"/>
+				<p:inputText value="#{studentDetails.studentProfile.emailAdd}" />
+				<p:outputLabel value="Year Level"/>
+				<p:inputText value="#{studentDetails.studentProfile.yearLevel}" />
+				<p:outputLabel value="Section"/>
+				<p:inputText value="#{studentDetails.studentProfile.section}" />
+			</h:panelGrid>
+			<p:commandButton value="Add" action="#{studentDetails.addStudentStudentProfile_temp()}"  oncomplete=":studentDetails_form:studentProfile.hide();">
+			</p:commandButton>
+		</p:dialog>
+		
+		
+			<!--  <p:dataTable id="studentProfiles_Table" value="#{studentDetails.listProfiles}" var="studProfiles">
+			<p:column>
+				<h:outputLabel value="#{listProfiles.gender}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{listProfiles.birthDay}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{listProfiles.contactNo}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{listProfiles.emailAdd}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{listProfiles.yearLevel}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{listProfiles.section}" />
+			</p:column>
+		</p:dataTable>-->
+			<p:commandButton value="Generate" action="#{studentDetails.generateProfiles()}" ajax="false"></p:commandButton>
+			<p:commandButton value="Generate Jasper" action="#{studentDetails.jasperReport()}" ajax="false"></p:commandButton>
+		
+		
+	</h:form>
+
+</h:body>
+</html>

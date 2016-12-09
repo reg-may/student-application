@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:t="http://myfaces.apache.org/tomahawk">
+<h:head>
+	<title>Add User - User Application</title>
+</h:head>
+<h:body>
+	<h:form id="addUser_form">
+	<p:themeSwitcher id="basic" style="width:165px">
+            <f:selectItem itemLabel="Choose Theme" itemValue="" />
+            <f:selectItems value="[afterdark, afternoon, afterwork, aristo, black-tie, blitzer, bluesky, bootstrap, casablanca, cupertino, cruze, dark-hive, delta, dot-luv, eggplant, excite-bike, flick, glass-x, home, hot-sneaks, humanity, le-frog, midnight, mint-choc, omega, overcast, pepper-grinder, redmond, rocket, sam, smoothness, south-street, start, sunny, swanky-purse, trontastic, ui-darkness, ui-lightness, vader]" var="theme" itemLabel="" itemValue=""/>
+    </p:themeSwitcher>
+	<p:layout style="min-width:800px;min-height:500px;">
+	<p:layoutUnit position="west" resizable="true" size="200" minSize="200" maxSize="500">
+		<h4>User</h4>
+			<p:outputLabel for="file" value="Select Image file" />
+			<p:message for="file" />
+            <p:fileUpload id="file" value="#{addUser.uploadedFile}" mode="simple" skinSimple="true" />
+			<p:inputText id="username" a:placeholder="Username" value="#{addUser.user.userName}" />
+			<p:inputText id="password" a:placeholder="Password" value="#{addUser.user.passWord}" />
+			<p:inputText id="firstname" a:placeholder="First Name" value="#{addUser.user.firstName}" />
+			<p:inputText id="middlename" a:placeholder="Middle Name" value="#{addUser.user.middleName}" />
+			<p:inputText id="lastname" a:placeholder="Last Name" value="#{addUser.user.lastName}" />
+			<p:inputText id="gender" a:placeholder="Gender" value="#{addUser.user.gender}" />
+			<p:inputText id="birthday" a:placeholder="Birthday" value="#{addUser.user.birthDay}" />
+			<p:inputText id="type" value="Student" readonly="true" />
+	</p:layoutUnit>
+	<p:layoutUnit position="center" resizable="true">
+      		<p:dataTable value="#{addUser.users}" var="user">
+						<p:column headerText="Id No." style="width: 50px">
+							<h:outputText value="#{user.idNo}" />
+						</p:column>
+						<p:column headerText="Student Name">
+							<h:outputText value="#{user.firstName} #{user.lastName}" />
+						</p:column>
+						<p:column>	
+						</p:column>
+			</p:dataTable>
+    </p:layoutUnit>
+	</p:layout>
+		<p:commandButton value="Add" oncomplete="PF('userSubject').show();" />
+		<p:commandButton value="Save" action="#{addUser.addUser()}"/>
+		<p:commandButton value="Reset" action="#{addUser.Cancel()}"></p:commandButton>
+		
+		<h4>Subject Added</h4>
+		<p:dataTable id="subject_table" value="#{addUser.subjectsTemp}" var="subject" rendered="#{addUser.rendered}">
+			<p:column>
+				<h:outputLabel value="#{subject.name}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.unit}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.description}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.assignedTo}" />
+			</p:column>
+		</p:dataTable>
+		
+		<p:dialog header="Subject" width="500" widgetVar="userSubject" id="userSubject_dialog" >
+			<h:panelGrid columns="2" cellpadding="5"> 
+				<p:outputLabel value="Subject Name" />
+				<p:inputText value="#{addUser.subject.name}" />
+				<p:outputLabel value="Unit"/>
+				<p:inputText value="#{addUser.subject.unit}" />
+				<p:outputLabel value="Description"/>
+				<p:inputText value="#{addUser.subject.description}" />
+				<p:outputLabel value="Assigned To"/>
+				<p:inputText value="#{addUser.subject.assignedTo}" />
+				
+			</h:panelGrid>
+			<p:commandButton value="Add" action="#{addUser.addSubjects()}" oncomplete=":addUser_form:userSubject.hide();"></p:commandButton>
+		</p:dialog>
+	</h:form>
+		
+</h:body>
+</html>

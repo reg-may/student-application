@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>Home - Student Application</title>
+</h:head>
+<h:body>
+	<h:form id="form">
+		<p:panel header="Student Profile">
+			<h:panelGrid columns="2" cellpadding="5">
+				<p:outputLabel value="First Name" for="firstName"/>
+				<p:inputText id="firstName" value="#{studentController.student.firstName}"/>
+				<p:outputLabel value="Last Name" for="lastName"/>
+				<p:inputText id="lastName" value="#{studentController.student.lastName}"/>
+				<p:commandButton value="Save" action="#{studentController.saveStudent()}">
+				</p:commandButton>
+			</h:panelGrid>
+		</p:panel>
+		
+		<p:growl id="msgs" showDetail="true"/>
+		
+		<p:dataTable id="student_table" value="#{studentController.studentList}" var="student" editable="true">
+			<p:ajax event="rowEdit" listener="#{studentController.onRowEdit()}" update=":form:msgs"/>
+			<p:ajax event="rowEditCancel" listener="#{studentController.onRowCancel}" update=":form:msgs"/>
+			<p:column headerText="Student Id" style="width: 50px; ">
+				<h:outputText value="#{student.studentId}" />
+			</p:column>
+			<p:column headerText="First Name">
+				<p:cellEditor>
+					<f:facet name="output"><h:outputText value="#{student.firstName}" /></f:facet>
+					<f:facet name="input"><p:inputText id="modelInput" value="#{student.firstName}" style="width:100%"/></f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Last Name">
+				<p:cellEditor>
+					<f:facet name="output"><h:outputText value="#{student.lastName}" /></f:facet>
+					<f:facet name="input"><p:inputText value="#{student.lastName}" style="width:100%"/></f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Options">
+				<p:commandButton value="Delete" action="#{studentController.deleteStudent(student)}" update=":form:student_table" />
+				
+ 				<p:commandButton value="Student Profile" 
+ 					oncomplete="PF('studentProfile').show();" update=":form:studentProfile_dialog" 
+ 					action="#{studentProfileController.findStudentWithDetails()}">
+  					<f:setPropertyActionListener value="#{student}" target="#{globalController.student}" />
+ 				</p:commandButton>
+			
+			</p:column>
+			<p:column style="width:32px">
+	           <p:rowEditor />
+	        </p:column>
+		</p:dataTable>
+		
+		<p:dialog header="Student Profile" widgetVar="studentProfile" id="studentProfile_dialog" >
+			<h4>Add Student Profile</h4>
+			<p:outputLabel value="#{studentProfileController.student.firstName}"/>
+			<p:dataTable id="studProfile_table" value="#{studentProfileController.student.studentProfileList}" var="studentProfile">
+				<p:column headerText="Year" >
+					<h:outputText value="#{studentProfile.yearLevel}" />
+				</p:column>
+				<p:column headerText="Section" >
+					<h:outputText value="#{studentProfile.section}" />
+				</p:column>
+			</p:dataTable>
+			<h:panelGrid columns="2" cellpadding="5">
+				<p:outputLabel value="Gender"/>
+				<p:inputText value="#{studentProfileController.studentProfile.gender}"/>
+				<p:outputLabel value="Birthday"/>
+				<p:inputText value="#{studentProfileController.studentProfile.birthDay}"/>
+				<p:outputLabel value="Contact No"/>
+				<p:inputText value="#{studentProfileController.studentProfile.contactNo}"/>
+				<p:outputLabel value="Email Address"/>
+				<p:inputText value="#{studentProfileController.studentProfile.emailAdd}"/>
+				<p:outputLabel value="Year Level"/>
+				<p:inputText value="#{studentProfileController.studentProfile.yearLevel}"/>
+				<p:outputLabel value="Section"/>
+				<p:inputText value="#{studentProfileController.studentProfile.section}"/>
+				<p:commandButton value="Save" action="#{studentProfileController.saveStudentProfile()}"/>
+			</h:panelGrid>
+		</p:dialog>
+		<ui:remove> 
+		</ui:remove>
+	</h:form>
+</h:body>
+</html>

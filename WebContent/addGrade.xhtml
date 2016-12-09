@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>User - Student Application</title>
+</h:head>
+<h:body>
+	<h:form id="gradeDetails_form" >
+		<h:panelGrid id="notif">
+			<f:facet name="header">
+	            <p:messages id="msgs" />
+	        </f:facet>
+        </h:panelGrid>
+       <p:layout style="min-width:500px;min-height:600px;">
+	     <p:layoutUnit position="west" resizable="true" size="200" minSize="200" maxSize="200">
+			<h4>User Student Grade</h4>
+			<h:panelGrid columns="2" cellpadding="5">
+				
+				<h:outputText value="Subject Name" for="subName"/>
+				<h:outputText id="subName" value="#{addGrade.subject.name}" />
+				<h:outputText value="Subject Description" for="subDes"/>
+				<h:outputText id="subDes" value="#{addGrade.subject.description}" />
+				<h:outputText value="Subject Unit" for="subUnit"/>
+				<h:outputText id="subUnit" value="#{addGrade.subject.unit}" />
+			</h:panelGrid>
+		</p:layoutUnit>
+		<p:layoutUnit position="center" resizable="true" size="300" minSize="300" maxSize="400">
+		<h4>Add Grade</h4>
+			<h:inputText value="#{addGrade.grade.midtermScore}" a:placeholder="Midterm Score" />
+			<h:inputText value="#{addGrade.grade.finalScore}" a:placeholder="Final Score" />
+			<h:inputText value="#{addGrade.grade.finalGrade}" a:placeholder="Final Grade" readonly="true" />
+			
+			<p:commandButton value="Save Grade" action="#{addGrade.saveGrade()}" update="gradeDetails_form" style="width:120px;height:55px;"></p:commandButton>
+			<p:commandButton value="Add Laboratory" oncomplete="PF('userLaboratory').show();" style="width:130px;height:55px;"></p:commandButton>
+			<p:commandButton value="Add Assignment" oncomplete="PF('userAssignment').show();" style="width:130px;height:55px;"></p:commandButton>
+			<p:commandButton value="Add Quiz" oncomplete="PF('userQuiz').show();" style="width:120px;height:55px;"></p:commandButton>
+			<p:commandButton value="Generate Student Grade" action="#{addGrade.generateStudentGradeRecord()}"></p:commandButton>
+			<p:commandButton value="Download Student Grade" action="#{addGrade.downLoad()}"></p:commandButton>
+				<p:dataTable value="#{addGrade.grades}" var="grade">
+								<p:column headerText="Grade Id" style="width: 50px">
+									<h:outputText value="#{grade.idNo}" />
+								</p:column>
+								<p:column headerText="Midterm Score">
+									<h:outputText value="#{grade.midtermScore}" />
+								</p:column>
+								<p:column headerText="Final Score">	
+									<h:outputText value="#{grade.finalScore}" />
+								</p:column>
+								<p:column headerText="Final Grade">	
+									<h:outputText value="#{grade.finalGrade}" />
+								</p:column>
+				</p:dataTable>
+				<p:dataTable value="#{addGrade.laboratoriesTemp}" var="laboratories">
+								<p:column headerText="Lab Id" style="width: 50px">
+									<h:outputText value="#{laboratories.idNo}" />
+								</p:column>
+								<p:column headerText="Lab Name">
+									<h:outputText value="#{laboratories.name}" />
+								</p:column>
+								<p:column headerText="Lab Score">	
+									<h:outputText value="#{laboratories.score}" />
+								</p:column>
+				</p:dataTable>
+			   	<p:dataTable value="#{addGrade.assignmentsTemp}" var="assignments" editable="true">
+			   	<p:ajax event="rowEdit" listener="#{addGrade.onRowEditAss}" update=":gradeDetails_form:notif"/>
+				<p:ajax event="rowEditCancel" listener="#{addGrade.onRowCancel}" update=":gradeDetails_form:notif"/>
+								<p:column headerText="Assignment Id" style="width: 50px">
+									<h:outputText value="#{assignments.idNo}" />
+								</p:column>
+								<p:column headerText="Assignment Name">
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{assignments.name}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText id="modelInput" value="#{assignments.name}" style="width:100%"/>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column headerText="Assignment Score">	
+									<p:cellEditor>
+										<f:facet name="output">
+											<h:outputText value="#{assignments.score}" />
+										</f:facet>
+										<f:facet name="input">
+											<p:inputText value="#{assignments.score}" style="width:100%"/>
+										</f:facet>
+									</p:cellEditor>
+								</p:column>
+								<p:column style="width:32px">
+							    	<p:rowEditor />
+							    </p:column>
+				</p:dataTable>
+					<p:dataTable value="#{addGrade.quizzesTemp}" var="quizzes">
+								<p:column headerText="Quiz Id" style="width: 50px">
+									<h:outputText value="#{quizzes.idNo}" />
+								</p:column>
+								<p:column headerText="Quiz Name">
+									<h:outputText value="#{quizzes.name}" />
+								</p:column>
+								<p:column headerText="Quiz Score">	
+									<h:outputText value="#{quizzes.score}" />
+								</p:column>
+				</p:dataTable>
+		</p:layoutUnit>
+		</p:layout>
+			<p:dialog header="Subject" width="500" widgetVar="userQuiz" id="userQuiz_dialog" >
+			<h4>Add Quiz</h4>
+			<p:panelGrid columns="2" cellpadding="5">
+				<h:inputText value="#{addGrade.quiz.name}" a:placeholder="Quiz Name" />
+				<h:inputText value="#{addGrade.quiz.score}" a:placeholder="Quiz Score" />
+				<p:commandButton value="Save Quiz" action="#{addGrade.saveQuizzes()}" oncomplete=":gradeDetails_form:userQuiz.hide();"></p:commandButton>
+			</p:panelGrid>
+			</p:dialog>
+			
+			<p:dialog header="Assignment" width="500" widgetVar="userAssignment" id="userAssignment_dialog" >
+			<h4>Add Assignment</h4>
+			<p:panelGrid columns="2" cellpadding="5">
+				<h:inputText value="#{addGrade.assignment.name}" a:placeholder="Assignment Name" />
+				<h:inputText value="#{addGrade.assignment.score}" a:placeholder="Assignment Score" />
+				<p:commandButton value="Save Assignment" action="#{addGrade.saveAssignments()}" oncomplete=":gradeDetails_form:userAssignment.hide();"></p:commandButton>
+			</p:panelGrid>
+			</p:dialog>
+			
+			<p:dialog header="Laboratory" width="500" widgetVar="userLaboratory" id="userLaboratory_dialog" >
+			<h4>Add Laboratory</h4>
+			<p:panelGrid columns="2" cellpadding="5">
+				<h:inputText value="#{addGrade.laboratory.name}" />
+				<h:inputText value="#{addGrade.laboratory.score}" />
+				<p:commandButton value="Save Laboratory" action="#{addGrade.saveLaboratories()}" oncomplete=":gradeDetails_form:userLaboratory.hide();"></p:commandButton>
+			</p:panelGrid>
+			</p:dialog>
+	</h:form>
+	
+</h:body>
+</html>

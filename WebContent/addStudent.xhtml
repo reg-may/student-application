@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>Add Student - Student Application</title>
+</h:head>
+<h:body>
+	<h:form id="addStudent_form">
+		<h4>Student</h4>
+		<p:panelGrid columns="2" cellpadding="5">
+			<h:outputLabel value="First Name" />
+			<h:inputText value="#{addStudent.student.firstName}" />
+			<h:outputLabel value="Last Name" />
+			<h:inputText value="#{addStudent.student.lastName}" />
+		</p:panelGrid>
+		<br/>
+		<br/>
+		
+		<p:dataTable id="studentProfileList_temp" value="#{addStudent.student.studentProfileList}" var="studentProfile">
+			<p:column headerText="Year Level">
+				<h:outputText value="#{studentProfile.yearLevel}" />
+			</p:column>
+			<p:column headerText="Section">
+				<h:outputText value="#{studentProfile.section}" />
+			</p:column>
+		</p:dataTable>
+		
+		<ui:remove>
+		<p:dataTable id="studentProfileList_temp" value="#{addStudent.loadStudentProfileList_temp()}" var="studentProfile">
+			<p:column headerText="Year Level">
+				<h:outputText value="#{studentProfile.yearLevel}" />
+			</p:column>
+			<p:column headerText="Section">
+				<h:outputText value="#{studentProfile.section}" />
+			</p:column>
+		</p:dataTable>
+		</ui:remove>
+		<br/>
+		<br/>
+		<h4>Student Profile</h4>
+		
+		<p:commandButton value="Add" oncomplete="PF('studentProfile').show();" />
+		<p:commandButton value="Save" action="#{addStudent.saveStudentWithDetails()}"/>
+		
+		<p:commandButton value="Generate Student" action="#{addStudent.generateStudent()}"></p:commandButton>
+		<p:commandButton value="Generate Profile" action="#{addStudent.generateProfile()}"></p:commandButton>
+		<p:commandButton value="Generate Profile and Student" action="#{addStudent.generateProfileandStudent()}"></p:commandButton>
+		<p:commandButton value="Download" action="#{addStudent.downLoad()}" ajax="false"></p:commandButton>
+		
+		
+		<p:dialog header="Profile" width="500" widgetVar="studentProfile" id="studentProfile_dialog" >
+			<h:panelGrid columns="2" cellpadding="5"> 
+				<p:outputLabel value="Gender" />
+				<p:inputText value="#{addStudent.studentProfile.gender}" />
+				<p:outputLabel value="Birthday"/>
+				<p:inputText value="#{addStudent.studentProfile.birthDay}" />
+				<p:outputLabel value="Contact No"/>
+				<h:selectOneMenu value="#{addStudent.countryId}">
+		                <f:selectItems value="#{countryController.countryCodeList}" var="country" itemValue="#{country.countryId}" itemLabel="#{country.countryCode}" />
+           		 </h:selectOneMenu>
+				<p:inputText value="#{addStudent.studentProfile.contactNo}" />
+				<p:outputLabel value="Email Address"/>
+				<p:inputText value="#{addStudent.studentProfile.emailAdd}" />
+				<p:outputLabel value="Year Level"/>
+				<p:inputText value="#{addStudent.studentProfile.yearLevel}" />
+				<p:outputLabel value="Section"/>
+				<p:inputText value="#{addStudent.studentProfile.section}" />
+			</h:panelGrid>
+			<p:commandButton value="Add" action="#{addStudent.addStudentProfileList()}"  update=":addStudent_form:studentProfileList_temp" oncomplete=":addStudent_form:studentProfile.hide();"></p:commandButton>
+			
+		</p:dialog>
+	</h:form>
+
+</h:body>
+</html>

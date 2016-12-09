@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:h="http://xmlns.jcp.org/jsf/html">
+<h:head>
+	<title>User - Student Application</title>
+</h:head>
+<h:body>
+	<h:form id="userDetails_form" >
+		<h:panelGrid id="notif">
+			<f:facet name="header">
+	            <p:messages id="msgs" />
+	        </f:facet>
+        </h:panelGrid>
+		<h4>User Student</h4>
+		
+		<h:panelGrid columns="2" cellpadding="5">
+			<h:outputText value="Id No:" />
+			<h:outputText value="#{userRecord.user.idNo}" />
+			<h:outputText value="Name:" />
+			<h:outputText value="#{userRecord.user.firstName} #{userRecord.user.lastName}" />
+		</h:panelGrid>
+		
+		<h4>Subject</h4>
+		
+		<p:dataTable id="subject_table" cellpadding="5" value="#{userRecord.user.subjects}" var="subject" editable="true">
+			<p:ajax event="rowEdit" listener="#{userRecord.onRowEdit}" update=":userDetails_form:notif"/>
+			<p:ajax event="rowEditCancel" listener="#{userRecord.onRowCancel}" update=":userDetails_form:notif"/>
+			<p:column headerText="Name">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{subject.name}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText id="modelInput" value="#{subject.name}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Unit">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{subject.unit}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{subject.unit}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Description">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{subject.description}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{subject.description}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			<p:column headerText="Assigned To">
+				<p:cellEditor>
+					<f:facet name="output">
+						<h:outputText value="#{subject.assignedTo}" />
+					</f:facet>
+					<f:facet name="input">
+						<p:inputText value="#{subject.assignedTo}" style="width:100%"/>
+					</f:facet>
+				</p:cellEditor>
+			</p:column>
+			
+			<p:column style="width:32px">
+		    	<p:rowEditor />
+		    </p:column>
+		    <p:column>
+		    	<p:commandButton value="Delete" action="#{userRecord.deleteSubject(subject)}" update=":userDetails_form:subject_table :userDetails_form:notif" ></p:commandButton>
+		    	<p:commandButton value="Add Grade" action="#{userRecord.redirectPage(subject)}"></p:commandButton>
+		    </p:column>
+		</p:dataTable>
+		<br/>
+		<br/>
+		<h4>Click Save to save Subject</h4>
+		<p:dataTable id="subjectTemp_table" value="#{userRecord.loadSubjectsTemp()}" var="subject">
+			<p:column>
+				<h:outputLabel value="#{subject.name}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.unit}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.description}" />
+			</p:column>
+			<p:column>
+				<h:outputLabel value="#{subject.assignedTo}" />
+			</p:column>
+		</p:dataTable>
+		<p:commandButton value="Add" oncomplete="PF('userSubject').show();" 
+			action="#{userRecord.createNewSubject()}"
+			update=":userDetails_form:userSubject_dialog" 
+			resetValues="true"/>
+		<p:commandButton value="Save" disabled="#{userRecord.disabled}" action="#{userRecord.updateUserSubjects()}" process="@this" update=":userDetails_form:notif :userDetails_form:subject_table :userDetails_form:subjectTemp_table"/>
+		
+		<p:dialog header="Subject" width="500" widgetVar="userSubject" id="userSubject_dialog" >
+			<h4>Add Subject #{userRecord.user.firstName} #{userRecord.user.lastName}</h4>
+			<h:panelGrid columns="2" cellpadding="5"> 	
+				<p:outputLabel value="Name"	/>		
+				<p:inputText value="#{userRecord.subject.name}" />
+				<p:outputLabel value="Unit"/>
+				<p:inputText value="#{userRecord.subject.unit}" />
+				<p:outputLabel value="Description"/>
+				<p:inputText value="#{userRecord.subject.description}" />
+				<p:outputLabel value="Assigned To"/>
+				<p:inputText value="#{userRecord.subject.assignedTo}" />
+			</h:panelGrid>
+			<p:commandButton value="Add" action="#{userRecord.addSubjectsTemp()}"  oncomplete=":userDetails_form:userSubject.hide();">
+			</p:commandButton>
+		</p:dialog>		
+	</h:form>
+
+</h:body>
+</html>
